@@ -7,6 +7,7 @@ services:
       repo: dajesso/TravelPlanner_Pipeline
       branch: main
       deploy_on_push: true
+    run_command: node src/seed.js
     run_command: node src/index.js
     environment_slug: node-js
     instance_size_slug: basic-xxs
