@@ -1,13 +1,13 @@
-name: felicis-travelplanner_pipeline
-region: syd  # or nyc, fra, etc.
+name: travel-planner-api
+region: syd
 
 services:
-  - name: web
+  - name: backend
     github:
       repo: dajesso/TravelPlanner_Pipeline
       branch: main
       deploy_on_push: true
-    run_command: node app.js
+    run_command: npm run dev
     environment_slug: node-js
     instance_size_slug: basic-xxs
     instance_count: 1
@@ -15,5 +15,6 @@ services:
       - key: NODE_ENV
         value: production
       - key: MONGO_URI
-        value: mongodb://127.0.0.1:27017/travelp
-
+        value: mongodb+srv://db-mongodb-syd1-49354-365d51c3.mongo.ondigitalocean.com
+      - key: JWT_SECRET
+        value: felicisontheloose
