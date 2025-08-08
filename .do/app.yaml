@@ -17,6 +17,6 @@ services:
       - key: MONGO_URI
         scope: RUN_AND_BUILD_TIME
         type: SECRET
-        value: mongodb+srv://doadmin:0Ao8NW1C97r5wu62@db-mongodb-syd1-49354-365d51c3.mongo.ondigitalocean.com/admin?retryWrites=true&w=majority
+        value_from: MONGO_URL
       - key: JWT_SECRET
         value: felicisontheloose
