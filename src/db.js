@@ -21,6 +21,8 @@ const mongoose = require('mongoose');
 
 // Section to connect to the MongoDB Atlas
 
+console.log('Mongo URI:', process.env.MONGO_URI);
+
 const connect = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
