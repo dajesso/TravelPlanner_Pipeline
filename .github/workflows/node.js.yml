@@ -29,3 +29,9 @@ jobs:
     - run: npm install
     - run: npm run build --if-present
     - run: npm test
+
+services:
+  mongo:
+    image: mongo:4.4
+    ports:
+      - 27017:27017
