@@ -16,7 +16,7 @@ const {connect} = require('./db.js')
 const cors = require("cors");
 
 const app = express ()
-const port = 3000
+const port = 8080
 
 // middleware to parse JSON body from the client
 app.use(express.json())
