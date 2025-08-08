@@ -1,0 +1,19 @@
+name: felicis-travelplanner_pipeline
+region: syd  # or nyc, fra, etc.
+
+services:
+  - name: web
+    github:
+      repo: dajesso/TravelPlanner_Pipeline
+      branch: main
+      deploy_on_push: true
+    run_command: node app.js
+    environment_slug: node-js
+    instance_size_slug: basic-xxs
+    instance_count: 1
+    envs:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        value: mongodb://127.0.0.1:27017/travelp
+
