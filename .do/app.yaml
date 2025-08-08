@@ -16,6 +16,8 @@ services:
       - key: NODE_ENV
         value: production
       - key: MONGO_URI
-        value: mongodb+srv://db-mongodb-syd1-49354-365d51c3.mongo.ondigitalocean.com/admin
+          scope: RUN_AND_BUILD_TIME
+          type: SECRET
+
       - key: JWT_SECRET
         value: felicisontheloose
