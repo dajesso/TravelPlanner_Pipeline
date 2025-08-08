@@ -21,11 +21,13 @@ const mongoose = require('mongoose');
 
 // Section to connect to the MongoDB Atlas
 
+// unsure why this isn't working but this is a simple workaround.
+
 console.log('Mongo URI:', process.env.MONGO_URI);
 
 const connect = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI, {
+    await mongoose.connect("mongodb+srv://doadmin:G2rfdh8U51Q49u60@db-mongodb-syd1-49354-365d51c3.mongo.ondigitalocean.com/admin", {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
