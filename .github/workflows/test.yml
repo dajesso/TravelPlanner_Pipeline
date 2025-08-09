@@ -28,6 +28,7 @@ jobs:
 
       - name: Seed the database
         run: npm run seed
-
       - name: Run Jest tests
         run: npm test
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
