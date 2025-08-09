@@ -33,9 +33,7 @@ beforeAll(async () => {
     tripId = tripRes.body._id;
 });
 
-afterAll(async () => {
-    await close();
-});
+
 
 // Testing
 
@@ -92,3 +90,5 @@ describe("Check if trip ID exists in the database", () => {
     });
 
 });
+
+close()
