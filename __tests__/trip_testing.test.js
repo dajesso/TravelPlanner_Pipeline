@@ -87,3 +87,7 @@ describe("Check if trip ID exists in the database", () => {
     });
 
 });
+
+afterAll(async () => {
+  await close();
+});
