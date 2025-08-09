@@ -1,5 +1,6 @@
 const request = require('supertest');
 const app = require('../src/index.js')
+const { connect, close } = require('../src/db.js');
 
 let token = ''; 
 let tripId = '';
