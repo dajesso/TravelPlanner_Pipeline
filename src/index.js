@@ -32,10 +32,11 @@ app.use(category_routes);
 
 // start the given server on the given port
 
-app.listen(port, async () => {
-  console.log(`Example app listening on port ${port}`);
-  connect()
-});
+if (require.main === module) {
+  app.listen(process.env.PORT || 8000, () => {
+    console.log('Server started');
+  });
+}
 
 // Global error handler
 app.use((err, req, res, next) => {
