@@ -10,6 +10,7 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -20,4 +21,4 @@ jobs:
           token: ${{ secrets.ACCESS_TOKEN }}
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}
-          
+
