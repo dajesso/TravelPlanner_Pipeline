@@ -27,7 +27,7 @@ console.log('Mongo URI:', process.env.MONGO_URI);
 
 const connect = async () => {
   try {
-    await mongoose.connect("mongodb+srv://doadmin:G2rfdh8U51Q49u60@db-mongodb-syd1-49354-365d51c3.mongo.ondigitalocean.com/admin", {
+    await mongoose.connect(process.env.MONGO_URI {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
