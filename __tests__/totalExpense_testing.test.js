@@ -10,7 +10,7 @@
 const request = require('supertest');
 const app = require('../src/index.js')
 const bcrypt = require('bcrypt');
-const { connect, close } = require('../src/db.js');
+const { connect, close } = require('../src/db');
 
 // will store value later
 let token = ''; 
@@ -19,6 +19,7 @@ let categoryId = '';
 
 //Set up for test
 beforeAll(async () => {
+  await connect();
   // Optional: clear users or use unique email to avoid duplicates
   const email = `test${Date.now()}@example.com`;
   const password = await bcrypt.hash("password", 10)
@@ -28,7 +29,6 @@ beforeAll(async () => {
     .post('/register')
     .send({
       email,
-      
       password: password,
       name: 'Test User'
     });
@@ -56,6 +56,10 @@ beforeAll(async () => {
     .set('Authorization', `Bearer ${token}`)
     .send({ name: 'TestCategory' });
   categoryId = categoryRes.body._id;
+});
+
+afterAll(async () => {
+  await close();
 });
 
 
@@ -117,9 +121,4 @@ describe('Trip Expense Logic', () => {
 
     expect(after.body.totalExpense).toBe(beforeTotalExpense + addedNewExpense.amount);
   });
-});
-
-
-afterAll(async () => {
-  await close();
 });
