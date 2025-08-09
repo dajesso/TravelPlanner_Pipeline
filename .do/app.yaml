@@ -16,4 +16,5 @@ services:
         value: production
       - key: JWT_SECRET
         value: felicisontheloose
-        MONGO_URI: ${{ secrets.MONGO_URI }}
+      - key: MONGO_URI
+        value: ${MONGO_URI}
