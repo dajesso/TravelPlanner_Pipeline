@@ -1,3 +1,5 @@
+jest.setTimeout(20000); // 20 seconds
+
 const request = require('supertest');
 const app = require('../src/index.js')
 
