@@ -1,9 +1,11 @@
-jest.setTimeout(20000); // 20 seconds
 
+const { MongoMemoryServer } = require('mongodb-memory-server');
+const mongoose = require('mongoose');
 const request = require('supertest');
-const app = require('../src/index.js')
+const app = require('../src/index.js');
 
-let token = ''; 
+let mongoServer;
+let token = '';
 let tripId = '';
 
 
@@ -12,7 +14,14 @@ let tripId = '';
 
 
 //Set up for test
+
 beforeAll(async () => {
+    // Start in-memory MongoDB
+    mongoServer = await MongoMemoryServer.create();
+    const uri = mongoServer.getUri();
+    process.env.MONGO_URI = uri;
+    await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
     // Register the user first (for disposable/in-memory DB)
     await request(app)
         .post('/register')
@@ -37,6 +46,11 @@ beforeAll(async () => {
             departureDate: "09/09/2025",
         });
     tripId = tripRes.body._id;
+});
+
+afterAll(async () => {
+    await mongoose.disconnect();
+    await mongoServer.stop();
 });
 
 // Testing
