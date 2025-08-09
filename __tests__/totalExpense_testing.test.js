@@ -117,3 +117,8 @@ describe('Trip Expense Logic', () => {
     expect(after.body.totalExpense).toBe(beforeTotalExpense + addedNewExpense.amount);
   });
 });
+
+
+afterAll(async () => {
+  await close();
+});
