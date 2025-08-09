@@ -10,6 +10,7 @@
 const request = require('supertest');
 const app = require('../src/index.js')
 const bcrypt = require('bcrypt');
+const { connect, close } = require('../src/db.js');
 
 // will store value later
 let token = ''; 
