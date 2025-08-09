@@ -7,9 +7,11 @@ on:
   pull_request:
     branches:
       - main
+
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -21,12 +23,15 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-      
-      
-        env:
-          MONGO_URI: ${{ secrets.MONGO_URI }}
+
       - name: Seed database
         run: npm run seed
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+
       - name: Run tests
         run: npm test
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+
 
