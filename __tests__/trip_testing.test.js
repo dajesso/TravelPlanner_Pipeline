@@ -1,6 +1,6 @@
 const request = require('supertest');
 const app = require('../src/index.js')
-const { connect, close } = require('../src/db.js');
+const { connect, close } = require('../src/db');
 
 let token = ''; 
 let tripId = '';
@@ -12,6 +12,7 @@ let tripId = '';
 
 //Set up for test
 beforeAll(async () => {
+    await connect();
     // Login and get token
     const res = await request(app)
     .post('/login')
@@ -19,7 +20,6 @@ beforeAll(async () => {
 
     //get the token
     token = res.body.token;
-
 
     // Create a trip and store its ID for testing
     const tripRes = await request(app)
@@ -31,6 +31,10 @@ beforeAll(async () => {
         departureDate: "09/09/2025",
     });
     tripId = tripRes.body._id;
+});
+
+afterAll(async () => {
+    await close();
 });
 
 // Testing
@@ -87,8 +91,4 @@ describe("Check if trip ID exists in the database", () => {
         expect(res.body._id).toBe(tripId);
     });
 
-});
-
-afterAll(async () => {
-  await close();
 });
