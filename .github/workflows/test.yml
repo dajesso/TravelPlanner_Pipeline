@@ -21,10 +21,12 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+      
+      
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
       - name: Seed database
         run: npm run seed
       - name: Run tests
         run: npm test
-        env:
-          MONGO_URI: ${{ secrets.MONGO_URI }}
 
