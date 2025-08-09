@@ -6,18 +6,30 @@
 
 // made sure the password was salted and hashed the arrival time and departure time was in the wrong format.
 // most of the code was correct without the fixes
-jest.setTimeout(20000); // 20 seconds
+
+
+const { MongoMemoryServer } = require('mongodb-memory-server');
+const mongoose = require('mongoose');
 const request = require('supertest');
-const app = require('../src/index.js')
+const app = require('../src/index.js');
 const bcrypt = require('bcrypt');
 
 // will store value later
-let token = ''; 
+
+let mongoServer;
+let token = '';
 let tripId = '';
 let categoryId = '';
 
 //Set up for test
+
 beforeAll(async () => {
+  // Start in-memory MongoDB
+  mongoServer = await MongoMemoryServer.create();
+  const uri = mongoServer.getUri();
+  process.env.MONGO_URI = uri;
+  await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
   // Use a static user for consistency with trip_testing.test.js
   const email = 'jesso@jesso.me';
   const password = 'password';
@@ -47,6 +59,11 @@ beforeAll(async () => {
     .set('Authorization', `Bearer ${token}`)
     .send({ name: 'TestCategory' });
   categoryId = categoryRes.body._id;
+});
+
+afterAll(async () => {
+  await mongoose.disconnect();
+  await mongoServer.stop();
 });
 
 
