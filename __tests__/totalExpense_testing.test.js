@@ -10,7 +10,6 @@
 const request = require('supertest');
 const app = require('../src/index.js')
 const bcrypt = require('bcrypt');
-const { connect, close } = require('../src/db');
 
 // will store value later
 let token = ''; 
@@ -19,12 +18,11 @@ let categoryId = '';
 
 //Set up for test
 beforeAll(async () => {
-  await connect();
   // Optional: clear users or use unique email to avoid duplicates
   const email = `test${Date.now()}@example.com`;
-  const password = await bcrypt.hash("password", 10)
+  const password = "password";
 
-  // Register new user
+  // Register new user (send plain password)
   const registerRes = await request(app)
     .post('/register')
     .send({
@@ -35,7 +33,7 @@ beforeAll(async () => {
   console.log('Register response:', registerRes.statusCode, registerRes.body);
   expect(registerRes.statusCode).toBe(201);
 
-  // Login to get token
+  // Login to get token (send plain password)
   const loginRes = await request(app)
     .post('/login')
     .send({ email, password });
@@ -56,10 +54,6 @@ beforeAll(async () => {
     .set('Authorization', `Bearer ${token}`)
     .send({ name: 'TestCategory' });
   categoryId = categoryRes.body._id;
-});
-
-afterAll(async () => {
-  await close();
 });
 
 
