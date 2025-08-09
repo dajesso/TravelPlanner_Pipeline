@@ -25,13 +25,27 @@ const mongoose = require('mongoose');
 
 console.log('Mongo URI:', process.env.MONGO_URI);
 
+let mongoServer;
+
 const connect = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI, {
+    let mongoUri;
+
+    if (process.env.MONGO_URI) {
+      mongoUri = process.env.MONGO_URI;
+      console.log('Using real MongoDB Atlas');
+    } else {
+      mongoServer = await MongoMemoryServer.create();
+      mongoUri = mongoServer.getUri();
+      console.log('Using in-memory MongoDB');
+    }
+
+    await mongoose.connect(mongoUri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log('Connected to MongoDB Atlas');
+
+    console.log('Connected to MongoDB');
   } catch (error) {
     console.error('MongoDB connection failed:', error.message);
     process.exit(1);
@@ -41,11 +55,17 @@ const connect = async () => {
 const close = async () => {
   try {
     await mongoose.disconnect();
+    if (mongoServer) {
+      await mongoServer.stop();
+      console.log('Stopped in-memory MongoDB');
+    }
     console.log('Disconnected from MongoDB');
   } catch (error) {
     console.error('MongoDB disconnection failed:', error.message);
   }
 };
+
+
 
 module.exports = { connect, close};
 
