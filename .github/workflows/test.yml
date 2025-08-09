@@ -22,6 +22,8 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+      - name: Seeding the database
+        run: npm run seed
 
       - name: Run tests
         run: npm test
