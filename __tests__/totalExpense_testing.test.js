@@ -8,6 +8,7 @@
 // most of the code was correct without the fixes
 
 jest.setTimeout(60000); 
+process.env.JWT_SECRET = 'felicisontheloose';
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const mongoose = require('mongoose');
 const request = require('supertest');
