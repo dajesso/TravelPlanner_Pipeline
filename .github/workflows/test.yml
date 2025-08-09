@@ -26,3 +26,6 @@ jobs:
 
       - name: Run Jest tests
         run: npm test
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          
