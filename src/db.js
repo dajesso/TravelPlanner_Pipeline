@@ -38,7 +38,6 @@ const connect = async () => {
   }
 };
 
-
 const close = async () => {
   try {
     await mongoose.disconnect();
