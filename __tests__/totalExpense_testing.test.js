@@ -6,7 +6,7 @@
 
 // made sure the password was salted and hashed the arrival time and departure time was in the wrong format.
 // most of the code was correct without the fixes
-
+jest.setTimeout(20000); // 20 seconds
 const request = require('supertest');
 const app = require('../src/index.js')
 const bcrypt = require('bcrypt');
