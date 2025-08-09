@@ -17,6 +17,7 @@ beforeAll(async () => {
     const res = await request(app)
     .post('/login')
     .send({ email: 'jesso@jesso.me', password: 'password' });
+    console.log(req.body.password)
 
     //get the token
     token = res.body.token;
@@ -65,6 +66,7 @@ describe("Check if login is successfull", () => {
         const res = await request(app)
         .post('/login')
         .send({ email: 'jesso@jesso.me', password: 'password' });
+        console.log(req.body.password)
         // must be 200 OK otherwise the test will fail
         expect(res.statusCode).toBe(200);
     });
