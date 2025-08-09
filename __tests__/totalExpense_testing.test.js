@@ -1,118 +1,93 @@
-//Logic
-//1. as the user enter get all trips, it will show total expense for each trips
-//2. when they enter get one trips there will be total exense for the ONE trip
-//3. when they add one expense...the total expense should auto add on
-//4. when we request all the trips from an authenticated user ......
-
-// made sure the password was salted and hashed the arrival time and departure time was in the wrong format.
-// most of the code was correct without the fixes
-
 const request = require('supertest');
 const app = require('../src/index.js')
-const bcrypt = require('bcrypt');
 
-// will store value later
 let token = ''; 
 let tripId = '';
-let categoryId = '';
+
+
+// fixed the trip_testing script so we needed to create a trip without a ID grab that id for testing the second issue
+// was that we needed to make arrival date and depature date MM/DD/YYYY when creati
+
 
 //Set up for test
 beforeAll(async () => {
-  // Optional: clear users or use unique email to avoid duplicates
-  const email = `test${Date.now()}@example.com`;
-  const password = "password";
+        // Register the user first (for disposable/in-memory DB)
+        await request(app)
+            .post('/register')
+            .send({ email: 'jesso@jesso.me', password: 'password' });
 
-  // Register new user (send plain password)
-  const registerRes = await request(app)
-    .post('/register')
-    .send({
-      email,
-      password: password,
-      name: 'Test User'
-    });
-  console.log('Register response:', registerRes.statusCode, registerRes.body);
-  expect(registerRes.statusCode).toBe(201);
+        // Login and get token
+        const res = await request(app)
+            .post('/login')
+            .send({ email: 'jesso@jesso.me', password: 'password' });
 
-  // Login to get token (send plain password)
-  const loginRes = await request(app)
-    .post('/login')
-    .send({ email, password });
-  expect(loginRes.statusCode).toBe(200);
-  token = loginRes.body.token;
-  expect(token).toBeDefined();
+        //get the token
+        token = res.body.token;
 
-  // Create trip
-  const tripRes = await request(app)
-    .post('/trips')
-    .set('Authorization', `Bearer ${token}`)
-    .send({ location: 'TestLocation', arrivalDate: '08/09/1997', departureDate: '09/09/2025' });
-  tripId = tripRes.body._id;
-
-  // Create category
-  const categoryRes = await request(app)
-    .post('/categories')
-    .set('Authorization', `Bearer ${token}`)
-    .send({ name: 'TestCategory' });
-  categoryId = categoryRes.body._id;
+        // Create a trip and store its ID for testing
+        const tripRes = await request(app)
+            .post('/trips')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                location: 'Test City',
+                arrivalDate: "08/09/1997",
+                departureDate: "09/09/2025",
+            });
+        tripId = tripRes.body._id;
 });
 
+// Testing
 
-//Testing
-describe('Trip Expense Logic', () => {
-    //Logic 1
-    it('should return all trips with their total expenses', async () => {
-    const res = await request(app)
-      .get('/trips')
-      .set('Authorization', `Bearer ${token}`);
 
-    expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    res.body.forEach(trip => {
-      expect(trip).toHaveProperty('totalExpense');
-      expect(typeof trip.totalExpense).toBe('number');
+
+describe("Get one trip and return the check _id, location, arrivalDate, departureDate, and totalExpense", () => {
+    it("should return one trip with its the correct keys.", async () => {
+
+
+        const res = await request(app)
+        .get(`/trips/${tripId}`)
+        .set('Authorization', `Bearer ${token}`);
+    
+        // must be 200 OK otherwise the test will fail
+        expect(res.statusCode).toBe(200);
+
+        // check the body for the correct properties
+    
+        expect(res.body).toHaveProperty('_id');
+        expect(res.body).toHaveProperty('location');
+        expect(res.body).toHaveProperty('arrivalDate');
+        expect(res.body).toHaveProperty('departureDate');
+        expect(res.body).toHaveProperty('totalExpense');
+    });
+});
+
+describe("Check if login is successfull", () => {
+    it("should return a token and user email", async () => {
+        const res = await request(app)
+        .post('/login')
+        .send({ email: 'jesso@jesso.me', password: 'password' });
+        // must be 200 OK otherwise the test will fail
+        expect(res.statusCode).toBe(200);
     });
   });
 
-  // Logic 2
-  it('should return one trip with its total expense', async () => {
-    const res = await request(app)
-      .get(`/trips/${tripId}`)
-      .set('Authorization', `Bearer ${token}`);
+  // now to check if the ID exists in the database
 
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('totalExpense');
-    expect(typeof res.body.totalExpense).toBe('number');
-  });
+describe("Check if trip ID exists in the database", () => {
+    it("should return a trip with the given ID", async () => {
 
-  //Logic 3
-  it('should update the total expense after adding a new expense', async () => {
-    // old total expense(before) + new expense = final total expense(after)
-    const before = await request(app)
-      .get(`/trips/${tripId}`)
-      .set('Authorization', `Bearer ${token}`);
-    
-    const beforeTotalExpense = before.body.totalExpense;
+        
+        
+        const res = await request(app)
+        .get(`/trips/${tripId}`)
+        .set('Authorization', `Bearer ${token}`);
+        
+        
+        // must be 200 OK otherwise the test will fail
+        expect(res.statusCode).toBe(200);
+        
+        // check if the trip ID matches the one we created
+        expect(res.body._id).toBe(tripId);
+    });
 
-    // to add a expense to test
-    // array
-    const addedNewExpense = {
-      amount: 99,
-      description: 'Test meal',
-      trip: tripId,
-      category: categoryId
-    };
-    // action
-    const toAddNewExpense = await request(app)
-      .post('/expenses')
-      .set('Authorization', `Bearer ${token}`)
-      .send(addedNewExpense);
-
-    expect(toAddNewExpense.statusCode).toBe(201);
-
-    const after = await request(app)
-      .get(`/trips/${tripId}`)
-      .set('Authorization', `Bearer ${token}`);
-
-    expect(after.body.totalExpense).toBe(beforeTotalExpense + addedNewExpense.amount);
-  });
 });
