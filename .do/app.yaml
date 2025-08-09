@@ -14,9 +14,6 @@ services:
     envs:
       - key: NODE_ENV
         value: production
-      - key: MONGO_URI
-        scope: RUN_AND_BUILD_TIME
-        type: SECRET
-        value_from: MONGO_URI
       - key: JWT_SECRET
         value: felicisontheloose
+        MONGO_URI: ${{ secrets.MONGO_URI }}
