@@ -7,7 +7,6 @@ on:
   pull_request:
     branches:
       - main
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -22,10 +21,9 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-      - name: Seeding the database
-        run: npm run seed
 
       - name: Run tests
         run: npm test
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}
+
