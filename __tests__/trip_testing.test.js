@@ -1,6 +1,5 @@
 const request = require('supertest');
 const app = require('../src/index.js')
-const { connect, close } = require('../src/db');
 
 let token = ''; 
 let tripId = '';
@@ -12,28 +11,31 @@ let tripId = '';
 
 //Set up for test
 beforeAll(async () => {
-    await connect();
+    // Register the user first (for disposable/in-memory DB)
+    await request(app)
+        .post('/register')
+        .send({ email: 'jesso@jesso.me', password: 'password' });
+
     // Login and get token
     const res = await request(app)
-    .post('/login')
-    .send({ email: 'jesso@jesso.me', password: 'password' });
+        .post('/login')
+        .send({ email: 'jesso@jesso.me', password: 'password' });
+    console.log('Login response:', res.statusCode, res.body);
 
     //get the token
     token = res.body.token;
 
     // Create a trip and store its ID for testing
     const tripRes = await request(app)
-    .post('/trips')
-    .set('Authorization', `Bearer ${token}`)
-    .send({
-        location: 'Test City',
-        arrivalDate: "08/09/1997",
-        departureDate: "09/09/2025",
-    });
+        .post('/trips')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+            location: 'Test City',
+            arrivalDate: "08/09/1997",
+            departureDate: "09/09/2025",
+        });
     tripId = tripRes.body._id;
 });
-
-
 
 // Testing
 
@@ -90,5 +92,3 @@ describe("Check if trip ID exists in the database", () => {
     });
 
 });
-
-close()
